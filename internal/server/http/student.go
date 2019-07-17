@@ -14,13 +14,10 @@ import (
 func ListStudent(c *bm.Context) {
 	// studName := c.Query("studName")
 
-	// studList, err := srv.ListStudent(c, studName)
-	// if err != nil {
-	// 	r.JSON(nil, ecode.RequestErr)
-	// 	return
-	// }
-
-	c.JSON("studList", errors.New("错误"))
+	studList := svc.Dao.Test()
+	env := svc.AC.Get("env")
+	envs, _ := env.String()
+	c.JSON(studList+envs, errors.New("错误"))
 }
 
 // // @Summary 添加学生

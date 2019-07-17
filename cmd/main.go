@@ -5,13 +5,13 @@ import (
 	"flag"
 	"os"
 	"os/signal"
-	"server/internal/server/http"
-	"server/internal/service"
 	"syscall"
 	"time"
 
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/log"
+	"github.com/hjd919/server/internal/server/http"
+	"github.com/hjd919/server/internal/service"
 )
 
 func main() {
@@ -21,7 +21,7 @@ func main() {
 	}
 
 	logConfig := loadLogConfig()
-	log.Init(logConfig) // debug flag: log.dir={path}
+	log.Init(logConfig) // debug flag∏: log.dir={path}
 	defer log.Close()
 
 	log.Info("kratos-demo start")
@@ -39,7 +39,7 @@ func main() {
 				log.Error("httpSrv.Shutdown error(%v)", err)
 			}
 			log.Info("kratos-demo exit")
-			svc.Close()
+			// svc.Close()
 			cancel()
 			time.Sleep(time.Second)
 			return

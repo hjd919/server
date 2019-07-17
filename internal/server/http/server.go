@@ -1,10 +1,9 @@
 package http
 
 import (
-	"server/internal/service"
-
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
+	"github.com/hjd919/server/internal/service"
 )
 
 var (

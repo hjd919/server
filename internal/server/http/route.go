@@ -14,6 +14,7 @@ import (
 // }
 
 func initRouter(e *bm.Engine) {
+	e.GET("/test", ListStudent)
 	// e.Ping(ping)
 	student := e.Group("/api/v1")
 	{

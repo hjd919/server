@@ -1,15 +1,15 @@
 package service
 
 import (
-	"server/internal/dao"
+	"github.com/hjd919/server/internal/dao"
 
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 )
 
 // Service service.
 type Service struct {
-	ac  *paladin.Map
-	dao dao.Dao
+	AC  *paladin.Map
+	Dao *dao.Dao
 }
 
 // New new a service and return.
@@ -19,8 +19,8 @@ func New() (s *Service) {
 		panic(err)
 	}
 	s = &Service{
-		ac:  ac,
-		dao: dao.New(),
+		AC:  ac,
+		Dao: dao.New(),
 	}
 	return s
 }
@@ -31,6 +31,6 @@ func New() (s *Service) {
 // }
 
 // Close close the resource.
-func (s *Service) Close() {
-	s.dao.Close()
-}
+// func (s *Service) Close() {
+// 	s.dao.Close()
+// }

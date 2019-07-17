@@ -28,6 +28,8 @@ func NewMySQL(c *MySQLConfig) (db *gorm.DB) {
 
 	db.LogMode(true)
 
+	db.SingularTable(true)
+
 	db.DB().SetMaxIdleConns(10)
 	db.DB().SetMaxOpenConns(100)
 	return

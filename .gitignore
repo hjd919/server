@@ -1,2 +1,4 @@
 runtime
 go.sum
+cmd/*
+!cmd/main.go

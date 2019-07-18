@@ -1,8 +1,17 @@
-version: '3.7'
+version: "3.7"
+
+# 定义services
 services:
-    server:
-        build:
-            context: ./
-            dockerfile: Dockerfile
-        ports:
-            - "8000:8000"
+  api:
+    image: hujiande/alpine:1.1.0
+    network_mode: host
+    volumes:
+      - .:/app
+      - ../glibs:/glibs
+    logging: 
+        driver: json-file
+        options:
+          max-size: "200k"
+          max-file: "10"
+    entrypoint:
+      - ./api

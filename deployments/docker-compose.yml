@@ -12,4 +12,7 @@ services:
         options:
           max-size: "200k"
           max-file: "10"
+    environment:
+      - LOG_V=3
+      - LOG_STDOUT=false
     entrypoint: "./api -conf configs"

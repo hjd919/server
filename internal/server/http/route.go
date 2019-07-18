@@ -5,7 +5,7 @@ import (
 )
 
 func initRouter(e *bm.Engine) {
-	e.GET("/test", svc.ListStudent)
+	e.POST("/record", svc.Record)
 	// student := e.Group("/api/v1")
 	// {
 	// 	//获取学生列表

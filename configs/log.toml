@@ -1,4 +1,5 @@
 
 [log]
-    dir = "../runtime/log"
+    dir = "./runtime/log"
     stdout = true
+    v = 0

@@ -15,4 +15,5 @@ services:
     environment:
       - LOG_V=3
       - LOG_STDOUT=false
+      - LOG_DIR=./runtime/log
     entrypoint: "./api -conf configs"

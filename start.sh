@@ -37,7 +37,8 @@ case "$type" in
     #修改配置
 
     CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o dist/server_upload cmd/main.go
-
+    chmod +x dist/server_upload
+    
     cd dist
 
     docker-compose -p ${projectname} stop

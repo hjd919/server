@@ -7,6 +7,8 @@ projectname=kratos
 service=api
 serverHost=39.96.187.72
 
+cd $serverDir
+
 case "$type" in
 "git")
     git add -A
@@ -21,6 +23,7 @@ git pull && \
 /bin/bash ./start.sh docker"
     ;;
 "deploy")
+
     git pull
 
     go build -o cmd/main cmd/main.go
@@ -28,9 +31,7 @@ git pull && \
     ./cmd/main -conf ./configs
     ;;
 "docker")
-    cd $serverDir
-
-    #发布目录
+        #发布目录
     mkdir -p dist
 
     #复制

@@ -13,7 +13,7 @@ case "$type" in
 
     go build -o cmd/main cmd/main.go
     chmod +x cmd/main
-    ./cmd/main -conf ../configs
+    ./cmd/main -conf ./configs
     ;;
 "deploy")
     go run cmd/main.go -conf configs

@@ -8,8 +8,8 @@ import (
 
 // Service service.
 type Service struct {
-	AC  *paladin.Map
-	Dao *dao.Dao
+	ac  *paladin.Map
+	dao *dao.Dao
 }
 
 // New new a service and return.
@@ -19,18 +19,8 @@ func New() (s *Service) {
 		panic(err)
 	}
 	s = &Service{
-		AC:  ac,
-		Dao: dao.New(),
+		ac:  ac,
+		dao: dao.New(),
 	}
 	return s
 }
-
-// Ping ping the resource.
-// func (s *Service) Ping(ctx context.Context) (err error) {
-// 	return s.dao.Ping(ctx)
-// }
-
-// Close close the resource.
-// func (s *Service) Close() {
-// 	s.dao.Close()
-// }

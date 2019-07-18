@@ -60,7 +60,8 @@ deployApp() {
     replaceConfigMac ${env}
 
     # 编译go
-    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o dist/server_upload --tags "consul" main.go
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o dist/server_upload cmd/main.go
+    # CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' -o main cmd/main.go
 
     cd dist
     tar -czf dist.tar.gz *

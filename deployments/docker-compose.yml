@@ -7,11 +7,9 @@ services:
     network_mode: host
     volumes:
       - .:/app
-      - ../glibs:/glibs
     logging: 
         driver: json-file
         options:
           max-size: "200k"
           max-file: "10"
-    entrypoint:
-      - ./api
+    entrypoint: "./api -conf configs"

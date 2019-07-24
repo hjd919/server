@@ -9,7 +9,8 @@ import (
 )
 
 type MDBConfig struct {
-	DSN string `mapstructure:"dsn"`
+	DSN      string `mapstructure:"dsn"`
+	Database string
 }
 
 func NewMDB(c *MDBConfig) *mongo.Database {
@@ -30,5 +31,5 @@ func NewMDB(c *MDBConfig) *mongo.Database {
 		log.Fatal(err)
 	}
 
-	return client.Database("jishua")
+	return client.Database(c.Database)
 }

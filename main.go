@@ -1,13 +1,15 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/hjd919/server/api"
 	"github.com/hjd919/server/model"
 )
 
 func main() {
 	user := api.UserAddReq{}
-	println(user)
+	fmt.Println(user)
 	u := model.User{}
-	println(u)
+	fmt.Println(u)
 }

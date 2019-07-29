@@ -1,6 +1,7 @@
 #!/bin/bash
 type=$1
 env=$2
+testname=$3
 
 serverDir=/opt/server
 projectname=kratos

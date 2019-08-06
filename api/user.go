@@ -6,3 +6,7 @@ type UserAddReq struct {
 	Avatar   string                 `json:"avatar"`
 	Profile  map[string]interface{} `json:"profile"`
 }
+
+type UserAddReq2 struct {
+	Test string
+}

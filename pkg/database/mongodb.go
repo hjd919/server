@@ -9,11 +9,39 @@ import (
 )
 
 type MDBConfig struct {
-	DSN      string `mapstructure:"dsn"`
-	Database string
+	DSN string `mapstructure:"dsn"`
 }
 
-func NewMDB(c *MDBConfig) *mongo.Database {
+var mdbs map[string]*mongo.Database
+var mclient *mongo.Client
+
+func init() {
+	mdbs = make(map[string]*mongo.Database)
+}
+
+func NewMDB(c *MDBConfig, db string) *mongo.Database {
+
+	mdb, ok := mdbs[db]
+	if !ok {
+		log.Println("初始化mongo db:" + db)
+		if mclient == nil {
+			log.Println("初始化mongo client")
+			mclient = NewMClient(c)
+		}
+		mdb = mclient.Database(db)
+		mdbs[db] = mdb
+	}
+
+	return mdb
+}
+
+func NewMClient(c *MDBConfig) *mongo.Client {
+
+	if mclient != nil {
+		log.Println("已初始化mongo client，返回")
+		return mclient
+	}
+
 	// Set client options
 	clientOptions := options.Client().ApplyURI("mongodb://" + c.DSN).SetMaxPoolSize(20)
 
@@ -31,5 +59,5 @@ func NewMDB(c *MDBConfig) *mongo.Database {
 		log.Fatal(err)
 	}
 
-	return client.Database(c.Database)
+	return client
 }

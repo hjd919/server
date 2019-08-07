@@ -5,6 +5,7 @@ go 1.12
 require (
 	github.com/bilibili/kratos v0.2.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/elastic/go-elasticsearch/v8 v8.0.0-20190731061900-ea052088db25
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/jinzhu/gorm v1.9.10

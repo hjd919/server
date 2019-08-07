@@ -10,6 +10,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+func ConnectMongodbClient() (client *mongo.Client) {
+	conf := &MDBConfig{
+		DSN: "root:Hjd123%25%5E*@39.96.187.72:27017",
+	}
+	client = NewMClient(conf)
+	return
+}
+
 func ConnectMongodb() (db *mongo.Database) {
 	conf := &MDBConfig{
 		DSN: "root:Hjd123%25%5E*@39.96.187.72:27017",
@@ -124,4 +132,98 @@ func TestMongodbInsertMany(t *testing.T) {
 			t.Error("InsertMany TypeOf" + err.Error())
 		}
 	}
+}
+
+func TestMongodbTransaction(t *testing.T) {
+	client := ConnectMongodbClient()
+	ctx := context.Background()
+	defer client.Disconnect(ctx)
+	testDB := client.Database("test")
+	col := testDB.Collection("test")
+	var err error
+	//先在事务外写一条id为“111”的记录
+	/* 	_, err := col.InsertOne(ctx, bson.M{"_id": "111", "name": "ddd", "age": 50})
+	   	if err != nil {
+	   		t.Error("InsertOne TypeOf" + err.Error())
+	   		return
+	   	}
+	   	session, err := client.StartSession()
+	   	if err != nil {
+	   		t.Error("InsertOne TypeOf" + err.Error())
+	   	}
+
+	   	//开始事务
+	   	err = session.StartTransaction()
+	   	if err != nil {
+	   		fmt.Println(err)
+	   		return
+	   	}
+
+	   	//在事务内写一条id为“222”的记录
+	   	_, err = col.InsertOne(ctx, bson.M{"_id": "222", "name": "ddd", "age": 50})
+	   	if err != nil {
+	   		fmt.Println(err)
+	   		return
+	   	} */
+
+	// //写重复id
+	// _, err = col.InsertOne(ctx, bson.M{"_id": "111", "name": "ddd", "age": 50})
+	// if err != nil {
+	// 	session.AbortTransaction(ctx)
+	// } else {
+	// 	session.CommitTransaction(ctx)
+	// }
+
+	//第一个事务：成功执行
+	client.UseSession(ctx, func(sessionContext mongo.SessionContext) error {
+		err = sessionContext.StartTransaction()
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+
+		//在事务内写一条id为“222”的记录
+		_, err = col.InsertOne(sessionContext, bson.M{"_id": "555", "name": "ddd", "age": 50})
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+
+		//在事务内写一条id为“333”的记录
+		_, err = col.InsertOne(sessionContext, bson.M{"_id": "333", "name": "ddd", "age": 50})
+		if err != nil {
+			sessionContext.AbortTransaction(sessionContext)
+			return err
+		} else {
+			sessionContext.CommitTransaction(sessionContext)
+		}
+		return nil
+	})
+
+	//第二个事务：执行失败，事务没提交，因最后插入了一条重复id "111",
+	err = client.UseSession(ctx, func(sessionContext mongo.SessionContext) error {
+		err := sessionContext.StartTransaction()
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+
+		//在事务内写一条id为“222”的记录
+		_, err = col.InsertOne(sessionContext, bson.M{"_id": "444", "name": "ddd", "age": 50})
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+
+		//写重复id
+		_, err = col.InsertOne(sessionContext, bson.M{"_id": "111", "name": "ddd", "age": 50})
+		if err != nil {
+			sessionContext.AbortTransaction(sessionContext)
+			return err
+		} else {
+			sessionContext.CommitTransaction(sessionContext)
+		}
+		return nil
+	})
+
 }

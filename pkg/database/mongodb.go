@@ -61,3 +61,25 @@ func NewMClient(c *MDBConfig) *mongo.Client {
 
 	return client
 }
+
+func ConnectMongodbClient() (client *mongo.Client) {
+	conf := &MDBConfig{
+		DSN: "root:Hjd123%25%5E*@39.96.187.72:27017",
+	}
+	client = NewMClient(conf)
+	return
+}
+
+func ConnectMongodb() (db *mongo.Database) {
+	conf := &MDBConfig{
+		DSN: "root:Hjd123%25%5E*@39.96.187.72:27017",
+	}
+	db = NewMDB(conf, "test")
+	return
+}
+
+func SelectMongodbCollection() (coll *mongo.Collection) {
+	db := ConnectMongodb()
+	coll = db.Collection("testcoll")
+	return
+}

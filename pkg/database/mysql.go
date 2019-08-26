@@ -1,5 +1,7 @@
 package database
 
+// http://gorm.book.jasperxu.com/database.html#dbc
+
 import (
 	"github.com/bilibili/kratos/pkg/log"
 	"github.com/jinzhu/gorm"
@@ -13,8 +15,9 @@ type MySQLConfig struct {
 	Addr    string   // for trace
 	DSN     string   // write data source name.
 	ReadDSN []string // read data source name.
-	Active  int      // pool
-	Idle    int      // pool
+	MaxOpen int      // pool
+	MaxIdle int      // pool
+	Debug   bool
 }
 
 // NewMySQL new db and retry connection when has error.
@@ -26,11 +29,22 @@ func NewMySQL(c *MySQLConfig) (db *gorm.DB) {
 		log.Error("models.Setup err: %v", err)
 	}
 
-	db.LogMode(true)
+	db.LogMode(c.Debug)
 
 	db.SingularTable(true)
 
-	db.DB().SetMaxIdleConns(10)
-	db.DB().SetMaxOpenConns(100)
+	db.DB().SetMaxIdleConns(c.MaxIdle)
+	db.DB().SetMaxOpenConns(c.MaxOpen)
+	return
+}
+
+func MysqlConn() (client *gorm.DB) {
+	c := &MySQLConfig{
+		DSN:     "jdcj:Jdcjxiaozi527@tcp(39.96.187.72:33066)/post?charset=utf8&parseTime=True&loc=Local",
+		MaxOpen: 500,
+		MaxIdle: 10,
+		Debug:   true,
+	}
+	client = NewMySQL(c)
 	return
 }

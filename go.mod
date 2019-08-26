@@ -10,7 +10,10 @@ require (
 	github.com/go-redis/redis v6.15.2+incompatible
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/golang/snappy v0.0.1 // indirect
+	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/jinzhu/gorm v1.9.10
+	github.com/olivere/elastic v6.2.22+incompatible
+	github.com/olivere/elastic/v7 v7.0.5
 	github.com/pierrec/lz4 v2.0.5+incompatible // indirect
 	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/tidwall/pretty v1.0.0 // indirect

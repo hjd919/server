@@ -1,30 +1,56 @@
 package database
 
-import (
-	"log"
+// http://redisdoc.com/
 
-	"github.com/go-redis/redis"
-	// database driver
+import (
+	"time"
+
+	"github.com/gomodule/redigo/redis"
 )
 
-// RedisConfig Redis config.
+// RedisConfig mysql config.
 type RedisConfig struct {
 	Addr     string // for trace
-	Password string // pool
+	Password string // write data source name.
+	MaxOpen  int    // pool
+	MaxIdle  int    // pool
 	DB       int    // pool
+	Debug    bool
 }
 
 // NewRedis new db and retry connection when has error.
-func NewRedis(c *RedisConfig) (redisdb *redis.Client) {
-	redisdb = redis.NewClient(&redis.Options{
-		Addr:     c.Addr,
-		Password: c.Password, // no password set
-		DB:       c.DB,       // use default DB
-		// PoolSize: 10,
-	})
+func NewRedisPool(conf *RedisConfig) (pool *redis.Pool) {
+	pool = &redis.Pool{
+		MaxIdle:     conf.MaxIdle,
+		MaxActive:   conf.MaxOpen,
+		IdleTimeout: 240 * time.Second,
+		Dial: func() (conn redis.Conn, err error) {
+			conn, err = redis.Dial("tcp", conf.Addr, redis.DialPassword(conf.Password), redis.DialDatabase(conf.DB))
+			if err != nil {
+				return nil, err
+			}
+			return
+		},
+		TestOnBorrow: func(c redis.Conn, t time.Time) error {
+			if time.Since(t) < time.Minute {
+				return nil
+			}
+			_, err := c.Do("PING")
+			return err
+		},
+	}
+	return
+}
 
-	pong, err := redisdb.Ping().Result()
-	log.Println(pong, err)
-	// Output: PONG <nil>
+func RedisPoolGet() (pool *redis.Pool) {
+	c := &RedisConfig{
+		Addr:     "39.96.187.72:6379",
+		Password: "Hjd123!@#",
+		DB:       0,
+		MaxOpen:  500,
+		MaxIdle:  2,
+		Debug:    true,
+	}
+	pool = NewRedisPool(c)
 	return
 }

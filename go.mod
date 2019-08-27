@@ -4,6 +4,7 @@ go 1.12
 
 require (
 	github.com/bilibili/kratos v0.2.1
+	github.com/casbin/casbin v1.9.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/elastic/go-elasticsearch/v8 v8.0.0-20190731061900-ea052088db25
 	github.com/go-sql-driver/mysql v1.4.1

@@ -127,9 +127,7 @@ func TestStatDo(t *testing.T) {
 }
 
 func TestStatAdd(t *testing.T) {
-	// var (
-	// 	r map[string]interface{}
-	// )
+	arr := []string{"天气真好","中美贸易战阴影下的小伙伴","长期稳居第二的中国首度被日本挤下"}
 	ctx := context.Background()
 
 	client := ESConn()
@@ -144,7 +142,7 @@ func TestStatAdd(t *testing.T) {
 			daynum = next % 3
 		}
 		tweet1 := Tweet{
-			User:     "hjd",
+			User:     arr[daynum],
 			Message:  "trtrta1311",
 			Retweets: next,
 			Image:    "imageurl",

@@ -10,6 +10,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func TestMongodbConnect(t *testing.T) {
@@ -27,7 +28,7 @@ func TestMongodbInsertOne(t *testing.T) {
 		context.Background(),
 		bson.D{
 			{"item", "canvas"},
-			{"qty", 100},
+			{"qty", 2},
 			{"tags", bson.A{"cotton"}},
 			{"size", bson.D{
 				{"h", 28},
@@ -68,7 +69,10 @@ func TestMongodbInsertOneModel(t *testing.T) {
 		t.Error("InsertOne TypeOf" + err.Error())
 	}
 }
-
+func TestMongodbDrop(t *testing.T) {
+	coll := SelectMongodbCollection()
+	coll.Drop(context.Background())
+}
 func TestMongodbInsertMany(t *testing.T) {
 	coll := SelectMongodbCollection()
 
@@ -82,6 +86,7 @@ func TestMongodbInsertMany(t *testing.T) {
 				{"uom", "cm"},
 			}},
 			{"status", "A"},
+			{"arr", bson.A{"a", "b"}},
 		},
 		bson.D{
 			{"item", "notebook"},
@@ -92,6 +97,7 @@ func TestMongodbInsertMany(t *testing.T) {
 				{"uom", "in"},
 			}},
 			{"status", "A"},
+			{"arr", bson.A{"a", "c"}},
 		},
 		bson.D{
 			{"item", "paper"},
@@ -102,6 +108,7 @@ func TestMongodbInsertMany(t *testing.T) {
 				{"uom", "in"},
 			}},
 			{"status", "D"},
+			{"arr", bson.A{"d", "c"}},
 		},
 		bson.D{
 			{"item", "planner"},
@@ -112,6 +119,7 @@ func TestMongodbInsertMany(t *testing.T) {
 				{"uom", "cm"},
 			}},
 			{"status", "D"},
+			{"arr", bson.A{"e", "f"}},
 		},
 		bson.D{
 			{"item", "postcard"},
@@ -122,6 +130,7 @@ func TestMongodbInsertMany(t *testing.T) {
 				{"uom", "cm"},
 			}},
 			{"status", "A"},
+			{"arr", bson.A{"e", "j"}},
 		},
 	}
 
@@ -135,6 +144,18 @@ func TestMongodbInsertMany(t *testing.T) {
 		if typeName != "primitive.ObjectID" {
 			t.Error("InsertMany TypeOf" + err.Error())
 		}
+	}
+}
+func TestMongodbWhereIn(t *testing.T) {
+	coll := SelectMongodbCollection()
+	// filter := bson.M{"qty": bson.M{"$in": bson.A{100, 50}}}
+	filter := bson.M{"arr": bson.M{"$in": []string{"e"}}}
+	// filter := bson.M{}
+	cur, _ := coll.Find(context.Background(), filter)
+	for cur.Next(context.Background()) {
+		var a interface{}
+		cur.Decode(&a)
+		fmt.Println(a)
 	}
 }
 
@@ -257,7 +278,7 @@ func TestMongodbQueryDate(t *testing.T) {
 			log.Fatal(err)
 			return
 		}
-		log.Println(elem.CreatedAt.In(local2).Format("2006-01-02 15:04:05x32x33"))
+		log.Println(elem.CreatedAt.In(local2).Format("2006-01-02 15:04:05"))
 		items = append(items, elem)
 	}
 	if err := cur.Err(); err != nil {
@@ -266,4 +287,38 @@ func TestMongodbQueryDate(t *testing.T) {
 	}
 	log.Println(items)
 
+}
+
+func TestMongodbGetMax(t *testing.T) {
+	coll := SelectMongodbCollection()
+	options := options.FindOne()
+	options.SetSort(bson.M{"qty": 1})
+	var a struct {
+		Qty int
+	}
+	coll.FindOne(context.Background(), bson.M{}, options).Decode(&a)
+	fmt.Println(a)
+}
+
+func TestMongodbAggs(t *testing.T) {
+	coll := SelectMongodbCollection()
+	pipeline := mongo.Pipeline{ // max为分组
+		{{"$group", bson.D{{"_id", "max"}, {"max_port", bson.D{{"$max", "$qty"}}}}}},
+	}
+	var a struct {
+		MaxPort int `bson:"max_port"`
+	}
+	cur, _ := coll.Aggregate(context.Background(), pipeline)
+	for cur.Next(context.Background()) {
+		cur.Decode(&a)
+	}
+	fmt.Println(a.MaxPort)
+}
+
+func TestMongodbSelect(t *testing.T) {
+	coll := SelectMongodbCollection()
+	projection := bson.M{"qty": 1, "item": 1}
+	var a interface{}
+	coll.FindOne(context.Background(), bson.M{}, options.FindOne().SetProjection(projection)).Decode(&a)
+	fmt.Println(a)
 }

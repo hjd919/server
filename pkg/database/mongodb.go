@@ -10,6 +10,7 @@ import (
 
 type MDBConfig struct {
 	DSN string `mapstructure:"dsn"`
+	DB  string `mapstructure:"db"`
 }
 
 var mdbs map[string]*mongo.Database
@@ -19,8 +20,9 @@ func init() {
 	mdbs = make(map[string]*mongo.Database)
 }
 
-func NewMDB(c *MDBConfig, db string) *mongo.Database {
+func NewMDB(c *MDBConfig) *mongo.Database {
 
+	db := c.DB
 	mdb, ok := mdbs[db]
 	if !ok {
 		log.Println("初始化mongo db:" + db)
@@ -74,7 +76,7 @@ func ConnectMongodb() (db *mongo.Database) {
 	conf := &MDBConfig{
 		DSN: "root:Hjd123%25%5E*@39.96.187.72:27017",
 	}
-	db = NewMDB(conf, "test")
+	db = NewMDB(conf)
 	return
 }
 
